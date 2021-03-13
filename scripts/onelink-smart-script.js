@@ -12,6 +12,7 @@ class OneLinkUrlGenerator {
                     campaignStaticValue = null,
                     pidOverrideList = [],
                     gclIdParam = 'af_sub5',
+                    impressionURL = null,
                 } = {}) {
 
         console.debug("Constructing OneLink URL generator")
@@ -27,6 +28,7 @@ class OneLinkUrlGenerator {
         this.pidStaticValue = pidStaticValue,
         this.campaignKeysList = campaignKeysList,
         this.campaignStaticValue = campaignStaticValue,
+        this.impressionURL = impressionURL,
 
         // OneLink parameters
         this.campaign = getCampaignValue(this.campaignKeysList, this.campaignStaticValue);
@@ -36,7 +38,24 @@ class OneLinkUrlGenerator {
         this.afParams = {af_js_web: "true"};
     }
 
-    generateUrl(){
+    generateUrl(type){
+
+        let baseURL = ""
+        if(type == "click") {
+            baseURL = this.oneLinkURL;
+        } else if(type == "impression") {
+            if(this.impressionURL) {
+                baseURL = this.impressionURL;
+            } else {
+                console.debug("impressionURL not defined. To use generateURL(impression) make sure to pass impressionURL in the constructor.");
+                return null
+            }
+            
+        } else {
+            console.debug("Invalid input value for generateURL(type). Please pass 'click' or 'impression'.");
+            return null;
+        }
+
         if (this.mediaSource == null) {
             console.debug("No valid pid value was found. URL will no be changed");
             return null;
@@ -71,7 +90,8 @@ class OneLinkUrlGenerator {
         } else {
             console.debug("This user comes from SRN or custom network ");
         }
-        const finalURL = this.oneLinkURL + '?pid=' + pidValue + '&c=' + this.campaign + stringifyAfParameters(this.afParams);
+
+        const finalURL = baseURL + '?pid=' + pidValue + '&c=' + this.campaign + stringifyAfParameters(this.afParams);
         console.debug(`Generated OneLink URL ${finalURL}`)
         return finalURL;
     }
