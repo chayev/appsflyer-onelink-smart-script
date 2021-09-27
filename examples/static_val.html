@@ -10,7 +10,7 @@
   
   <!-- import the webpage's stylesheet -->
   <link rel="stylesheet" href="style.css">
-  
+  <script src="../scripts/easy.qrcode.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
 
@@ -43,26 +43,35 @@
         </div>
       </a>
     </div>
-
-  <h2 id="input_url" class="present_url">
-    No input URL
-  </h2>
-
-  <h2 id="output_url" class="present_url">
-    No output from script
-  </h2>
+    <div class="url-container">
+      <div id="qrcode"></div>
+      <div class="input_url-container">
+        <h2>Input URL</h2>
+        <textarea id="input_url" class="present_url">
+          No input URL
+        </textarea>
+      </div>
+      <div class="output_url-container">
+        <h2>Output URL</h2>
+        <textarea id="output_url" class="present_url">
+          No output from script
+        </textarea>
+      </div>
+    </div>
 
   <script type="text/javascript" src="../scripts/onelink-smart-script.js"></script>
   <script type="text/javascript">
     window.onload = function () {
       document.getElementById('input_url').innerHTML = window.location.href;
       const onelinkGenerator =  new window.AF.OneLinkUrlGenerator(
-        {oneLinkURL: "https://engmntqa.onelink.me/LtRd/",
+        {oneLinkURL: "https://onelink-sim.onelink.me/coiD",
          pidKeysList: ['af_pid'],
          pidStaticValue: 'my_static_pid',
          campaignKeysList: ['af_c'],
          campaignStaticValue: 'my_static_cmpn',
       });
+      onelinkGenerator.setCustomParameter("af_custom_fruit", "deep_link_value", "apples");
+      onelinkGenerator.setCustomParameter("af_custom_amount", "deep_link_sub1", "10");
       const url = onelinkGenerator.generateUrl();
 
       // onelink is generated
@@ -70,6 +79,15 @@
             document.getElementById('andrd_link').setAttribute('href', url);
             document.getElementById('ios_link').setAttribute('href', url);
             document.getElementById('output_url').innerHTML = url;
+
+            // Options
+            var options = {
+              text: url
+            };
+            
+            // Create QRCode Object
+            new QRCode(document.getElementById("qrcode"), options);
+            
       }
 
     };
